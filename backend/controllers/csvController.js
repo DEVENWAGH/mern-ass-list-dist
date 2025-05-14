@@ -3,6 +3,7 @@ const Agent = require("../models/Agent");
 const csv = require("csv-parser");
 const xlsx = require("xlsx");
 const fs = require("fs");
+const path = require("path");
 const { Readable } = require("stream");
 
 // @desc    Upload and distribute CSV
@@ -17,27 +18,19 @@ const uploadAndDistribute = async (req, res) => {
       });
     }
 
-    // Get all active agents
-    const agents = await Agent.find({ status: "active" });
-
-    if (agents.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No active agents found to distribute tasks to",
-      });
-    }
-
+    const fileExt = path.extname(req.file.originalname).toLowerCase();
     let items = [];
-    const fileExt = req.file.originalname.split(".").pop().toLowerCase();
 
     // Parse the file based on its extension
-    if (fileExt === "csv") {
+    if (fileExt === ".csv") {
       // Parse CSV
       items = await parseCSV(req.file.path);
-    } else if (fileExt === "xlsx" || fileExt === "xls") {
+    } else if ([".xlsx", ".xls"].includes(fileExt)) {
       // Parse Excel
       items = parseExcel(req.file.path);
     } else {
+      // Clean up the file
+      fs.unlinkSync(req.file.path);
       return res.status(400).json({
         success: false,
         message: "Invalid file format. Only CSV, XLSX, and XLS are supported",
@@ -46,6 +39,8 @@ const uploadAndDistribute = async (req, res) => {
 
     // Validate that the parsed items have the required fields
     if (items.length === 0) {
+      // Clean up the file
+      fs.unlinkSync(req.file.path);
       return res.status(400).json({
         success: false,
         message: "The file is empty or could not be parsed",
@@ -54,11 +49,25 @@ const uploadAndDistribute = async (req, res) => {
 
     for (const item of items) {
       if (!item.firstName || !item.phone) {
+        // Clean up the file
+        fs.unlinkSync(req.file.path);
         return res.status(400).json({
           success: false,
           message: "File missing required columns: FirstName and Phone",
         });
       }
+    }
+
+    // Get all active agents
+    const agents = await Agent.find({ status: "active" });
+
+    if (agents.length === 0) {
+      // Clean up the file
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({
+        success: false,
+        message: "No active agents found to distribute tasks to",
+      });
     }
 
     // Delete existing distributions first

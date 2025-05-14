@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: mern-ass-backend
+    runtime: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://your-vercel-app-name.vercel.app
+    healthCheckPath: /api/health
