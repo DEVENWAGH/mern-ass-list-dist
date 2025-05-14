@@ -29,7 +29,6 @@ const CsvUpload = () => {
       return;
     }
 
-    // Check file extension
     const fileExt = selectedFile.name.split(".").pop().toLowerCase();
     if (!["csv", "xlsx", "xls"].includes(fileExt)) {
       setFileError("Only CSV, XLSX, and XLS files are allowed");
@@ -38,7 +37,6 @@ const CsvUpload = () => {
       return;
     }
 
-    // Check file size (limit to 5MB)
     if (selectedFile.size > 5 * 1024 * 1024) {
       setFileError("File size should not exceed 5MB");
       e.target.value = null;
@@ -86,14 +84,14 @@ const CsvUpload = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
         Upload CSV and Distribute Tasks
       </h1>
-      <p className="text-lg text-gray-600 mb-6">
+      <p className="text-base md:text-lg text-gray-600 mb-6">
         Upload a file with contacts to distribute among agents
       </p>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8">
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <label
@@ -102,7 +100,7 @@ const CsvUpload = () => {
             >
               Upload File (CSV, XLSX, XLS)
             </label>
-            <div className="mt-1 flex items-center">
+            <div className="mt-1 flex flex-col md:flex-row items-center">
               <input
                 type="file"
                 id="csvFile"
@@ -119,17 +117,17 @@ const CsvUpload = () => {
             </p>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded"
+              className="w-full md:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded mb-2 md:mb-0"
             >
               Back to Dashboard
             </button>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded flex items-center"
+              className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded flex items-center justify-center"
               disabled={loading || !file || agents.length === 0}
             >
               {loading ? (
@@ -211,8 +209,10 @@ const CsvUpload = () => {
       )}
 
       {Object.keys(distributions).length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-4">Distribution Results</h2>
+        <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+          <h2 className="text-xl md:text-2xl font-bold mb-4">
+            Distribution Results
+          </h2>
 
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -268,7 +268,6 @@ const CsvUpload = () => {
                           View Items
                         </button>
 
-                        {/* Modal for this agent's items */}
                         <div
                           id={`modal-${agentId}`}
                           className="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center"

@@ -39,7 +39,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <div className="w-full">
+      <div className="w-full h-full min-h-screen flex flex-col bg-gray-50">
         <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" />} />
@@ -47,8 +47,12 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Navbar />
-                <Dashboard />
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <div className="flex-grow p-4 md:p-6">
+                    <Dashboard />
+                  </div>
+                </div>
               </ProtectedRoute>
             }
           />
@@ -56,8 +60,12 @@ function App() {
             path="/agents"
             element={
               <ProtectedRoute>
-                <Navbar />
-                <AgentsPage />
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <div className="flex-grow p-4 md:p-6">
+                    <AgentsPage />
+                  </div>
+                </div>
               </ProtectedRoute>
             }
           />
@@ -65,8 +73,12 @@ function App() {
             path="/agents/add"
             element={
               <ProtectedRoute>
-                <Navbar />
-                <AddAgent />
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <div className="flex-grow p-4 md:p-6">
+                    <AddAgent />
+                  </div>
+                </div>
               </ProtectedRoute>
             }
           />
@@ -78,8 +90,12 @@ function App() {
             path="/upload-csv"
             element={
               <ProtectedRoute>
-                <Navbar />
-                <CsvUpload />
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <div className="flex-grow p-4 md:p-6">
+                    <CsvUpload />
+                  </div>
+                </div>
               </ProtectedRoute>
             }
           />

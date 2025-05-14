@@ -2,15 +2,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Create axios instance with base URL from environment or use relative paths
-// Safely check for environment variables with window approach
+// Properly handle Vite environment variables using import.meta.env
 const API_URL =
+  import.meta.env.VITE_API_URL ||
   (typeof window !== "undefined" &&
     window.env &&
     window.env.REACT_APP_API_URL) ||
-  (typeof process !== "undefined" &&
-    process.env &&
-    process.env.REACT_APP_API_URL) ||
   "http://localhost:5000";
+
+console.log("API URL:", API_URL); // For debugging during development
 
 const api = axios.create({
   baseURL: API_URL,
