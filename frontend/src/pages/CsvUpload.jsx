@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { getAgents } from "../features/agents/agentSlice";
+import api from "../utils/axiosConfig";
 
 const CsvUpload = () => {
   const navigate = useNavigate();
@@ -53,21 +53,16 @@ const CsvUpload = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/csv/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+      const response = await api.post("/api/csv/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setDistributions(response.data.data);
       toast.success("File uploaded and tasks distributed successfully");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error uploading file");
+      // Error handling is now managed by the axios interceptor
       console.error("Error:", error);
     } finally {
       setLoading(false);

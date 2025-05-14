@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -14,7 +14,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        // In a real app, you would fetch these stats from your backend
+        // In a real implementation, fetch dashboard stats from the API
+        // const response = await api.get('/api/dashboard/stats');
+        // setStats(response.data);
+
         // For now, we'll just simulate this with a timeout
         setTimeout(() => {
           setStats({

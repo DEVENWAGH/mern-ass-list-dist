@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../utils/axiosConfig";
 
 const Agents = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { user } = useSelector((state) => state.auth);
-
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/agents", {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
+        const res = await api.get("/api/agents");
         setAgents(res.data);
         setLoading(false);
       } catch (err) {
@@ -26,7 +19,7 @@ const Agents = () => {
     };
 
     fetchAgents();
-  }, [user]);
+  }, []);
 
   return (
     <div className="agents-container">

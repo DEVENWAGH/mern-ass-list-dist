@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import { toast } from "react-toastify";
+import api from "../../utils/axiosConfig";
 
 const UploadList = () => {
   const navigate = useNavigate();
@@ -10,26 +11,19 @@ const UploadList = () => {
   const [uploading, setUploading] = useState(false);
   const [agents, setAgents] = useState([]);
 
-  const { user } = useSelector((state) => state.auth);
-
   // Fetch agents for distribution options
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/agents", {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
+        const res = await api.get("/api/agents");
         setAgents(res.data);
       } catch (err) {
         console.error("Error fetching agents:", err);
-        window.alert("Failed to load agents");
       }
     };
 
     fetchAgents();
-  }, [user]);
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -40,7 +34,7 @@ const UploadList = () => {
       const validExtensions = ["csv", "xlsx", "xls"];
 
       if (!validExtensions.includes(fileExt)) {
-        window.alert("Please upload a valid CSV or Excel file");
+        toast.error("Please upload a valid CSV or Excel file");
         e.target.value = null;
         return;
       }
@@ -53,18 +47,18 @@ const UploadList = () => {
     e.preventDefault();
 
     if (!file) {
-      window.alert("Please select a file to upload");
+      toast.error("Please select a file to upload");
       return;
     }
 
     if (!listName.trim()) {
-      window.alert("Please enter a list name");
+      toast.error("Please enter a list name");
       return;
     }
 
     // Check if we have enough agents to distribute
     if (agents.length === 0) {
-      window.alert("No agents available for list distribution");
+      toast.error("No agents available for list distribution");
       return;
     }
 
@@ -78,23 +72,17 @@ const UploadList = () => {
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${user.token}`,
         },
       };
 
-      const res = await axios.post(
-        "http://localhost:5000/api/lists/upload",
-        formData,
-        config
-      );
-      window.alert(
+      const res = await api.post("/api/lists/upload", formData, config);
+      toast.success(
         res.data.msg || "List uploaded and distributed successfully"
       );
       setUploading(false);
       navigate("/distributed-lists");
     } catch (err) {
       console.error("Error uploading list:", err);
-      window.alert(err.response?.data?.msg || "Error uploading list");
       setUploading(false);
     }
   };

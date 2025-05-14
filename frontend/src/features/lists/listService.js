@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../utils/axiosConfig";
 
 const API_URL = "/api/lists/";
 
@@ -6,48 +6,29 @@ const API_URL = "/api/lists/";
 const uploadList = async (formData, token) => {
   const config = {
     headers: {
-      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   };
 
-  const response = await axios.post(API_URL + "upload", formData, config);
+  const response = await api.post(API_URL + "upload", formData, config);
   return response.data;
 };
 
 // Get all lists
-const getLists = async (token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.get(API_URL, config);
+const getLists = async () => {
+  const response = await api.get(API_URL);
   return response.data;
 };
 
 // Get list by ID
-const getListById = async (id, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.get(API_URL + id, config);
+const getListById = async (id) => {
+  const response = await api.get(API_URL + id);
   return response.data;
 };
 
 // Get agent's list items
-const getAgentListItems = async (agentId, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.get(API_URL + "agent/" + agentId, config);
+const getAgentListItems = async (agentId) => {
+  const response = await api.get(API_URL + "agent/" + agentId);
   return response.data;
 };
 

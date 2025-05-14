@@ -15,8 +15,7 @@ export const createAgent = createAsyncThunk(
   "agents/create",
   async (agentData, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await agentService.createAgent(agentData, token);
+      return await agentService.createAgent(agentData);
     } catch (error) {
       const message =
         (error.response &&
@@ -34,8 +33,7 @@ export const getAgents = createAsyncThunk(
   "agents/getAll",
   async (_, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await agentService.getAgents(token);
+      return await agentService.getAgents();
     } catch (error) {
       const message =
         (error.response &&
@@ -53,8 +51,7 @@ export const getAgentById = createAsyncThunk(
   "agents/getById",
   async (id, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await agentService.getAgentById(id, token);
+      return await agentService.getAgentById(id);
     } catch (error) {
       const message =
         (error.response &&
@@ -72,8 +69,7 @@ export const updateAgent = createAsyncThunk(
   "agents/update",
   async ({ id, agentData }, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await agentService.updateAgent(id, agentData, token);
+      return await agentService.updateAgent(id, agentData);
     } catch (error) {
       const message =
         (error.response &&
@@ -91,8 +87,7 @@ export const deleteAgent = createAsyncThunk(
   "agents/delete",
   async (id, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await agentService.deleteAgent(id, token);
+      return await agentService.deleteAgent(id);
     } catch (error) {
       const message =
         (error.response &&

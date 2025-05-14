@@ -5,21 +5,30 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AgentsPage from "./pages/AgentsPage";
-import { useSelector } from "react-redux";
 import Navbar from "./components/layout/Navbar";
 import AddAgent from "./components/agents/AddAgent";
+import CsvUpload from "./pages/CsvUpload";
 import UploadList from "./components/lists/UploadList";
 import DistributedLists from "./components/lists/DistributedLists";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, isLoading } = useSelector((state) => state.auth);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     // Redirect to login if not authenticated
@@ -60,6 +69,24 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <AddAgent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-agent"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <AddAgent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload-csv"
+            element={
+              <ProtectedRoute>
+                <Navbar />
+                <CsvUpload />
               </ProtectedRoute>
             }
           />

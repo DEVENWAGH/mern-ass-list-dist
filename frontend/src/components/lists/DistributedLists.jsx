@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../utils/axiosConfig";
 
 const DistributedLists = () => {
   const [lists, setLists] = useState([]);
@@ -9,40 +8,25 @@ const DistributedLists = () => {
   const [selectedAgent, setSelectedAgent] = useState("");
   const [agents, setAgents] = useState([]);
 
-  const { user } = useSelector((state) => state.auth);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        };
-
         // Fetch agents
-        const agentsRes = await axios.get(
-          "http://localhost:5000/api/agents",
-          config
-        );
+        const agentsRes = await api.get("/api/agents");
         setAgents(agentsRes.data);
 
         // Fetch distributed lists
-        const listsRes = await axios.get(
-          "http://localhost:5000/api/lists",
-          config
-        );
+        const listsRes = await api.get("/api/lists");
         setLists(listsRes.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
-        window.alert("Failed to load distributed lists");
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [user]);
+  }, []);
 
   // Filter lists by agent
   const filterListsByAgent = (agentId) => {

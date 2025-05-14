@@ -1,29 +1,22 @@
-import axios from "axios";
+import api from "../../utils/axiosConfig";
 
 const API_URL = "/api/csv/";
 
 // Upload and distribute CSV
-const uploadCsv = async (csvData, token) => {
+const uploadCsv = async (csvData) => {
   const config = {
     headers: {
-      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   };
 
-  const response = await axios.post(API_URL + "upload", csvData, config);
+  const response = await api.post(API_URL + "upload", csvData, config);
   return response.data;
 };
 
 // Get distributions by agent
-const getDistributions = async (token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.get(API_URL + "distributions", config);
+const getDistributions = async () => {
+  const response = await api.get(API_URL + "distributions");
   return response.data;
 };
 
