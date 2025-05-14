@@ -14,39 +14,43 @@ if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("./uploads");
 }
 
-// Configure multer storage
+// Set up storage for file uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./uploads");
+  destination: function (req, file, cb) {
+    const uploadDir = "./uploads";
+    cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 
-// File filter function
+// File filter function for validation
 const fileFilter = (req, file, cb) => {
-  // Allow only specific file extensions
-  const allowedTypes = [".csv", ".xlsx", ".xls"];
-  const ext = path.extname(file.originalname).toLowerCase();
+  // Accept csv, xlsx, xls files only
+  const filetypes = /csv|xlsx|xls/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
 
-  if (allowedTypes.includes(ext)) {
-    cb(null, true);
+  if (extname) {
+    return cb(null, true);
   } else {
-    cb(new Error("Invalid file type. Only CSV, XLSX, and XLS are allowed."));
+    cb(new Error("Only CSV, XLSX, and XLS files are allowed"), false);
   }
 };
 
 const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    fileFilter(req, file, cb);
-  },
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB file size limit
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: fileFilter,
 });
 
 // Routes
 router.post("/upload", protect, upload.single("csvFile"), uploadAndDistribute);
+
 router.get("/distributions", protect, getDistributions);
 
 module.exports = router;

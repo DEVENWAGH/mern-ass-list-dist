@@ -29,7 +29,7 @@ function AgentsPage() {
 
   const { user } = useSelector((state) => state.auth);
   const { agents, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.agents
+    (state) => state.agent
   );
 
   useEffect(() => {
@@ -124,7 +124,6 @@ function AgentsPage() {
     }
 
     if (editMode) {
-      // Don't require password for updates
       const agentData = { ...formData };
       if (!agentData.password) delete agentData.password;
       dispatch(updateAgent({ id: currentAgent._id, agentData }));
@@ -163,7 +162,7 @@ function AgentsPage() {
         </button>
       </div>
 
-      {agents.length === 0 ? (
+      {!agents || agents.length === 0 ? (
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <p className="text-gray-600">
             No agents found. Add your first agent!
@@ -261,7 +260,6 @@ function AgentsPage() {
         </div>
       )}
 
-      {/* Modal for Add/Edit Agent */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="fixed inset-0 bg-black opacity-50"></div>

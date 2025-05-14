@@ -14,8 +14,6 @@ import AgentsPage from "./pages/AgentsPage";
 import Navbar from "./components/layout/Navbar";
 import AddAgent from "./components/agents/AddAgent";
 import CsvUpload from "./pages/CsvUpload";
-import UploadList from "./components/lists/UploadList";
-import DistributedLists from "./components/lists/DistributedLists";
 import { useSelector } from "react-redux";
 
 // Protected route component
@@ -74,12 +72,7 @@ function App() {
           />
           <Route
             path="/add-agent"
-            element={
-              <ProtectedRoute>
-                <Navbar />
-                <AddAgent />
-              </ProtectedRoute>
-            }
+            element={<Navigate to="/agents/add" replace />}
           />
           <Route
             path="/upload-csv"
@@ -87,24 +80,6 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <CsvUpload />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lists/upload"
-            element={
-              <ProtectedRoute>
-                <Navbar />
-                <UploadList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lists"
-            element={
-              <ProtectedRoute>
-                <Navbar />
-                <DistributedLists />
               </ProtectedRoute>
             }
           />

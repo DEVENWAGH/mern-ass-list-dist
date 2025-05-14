@@ -72,7 +72,7 @@ function Dashboard() {
             </p>
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md transition-colors duration-300"
-              onClick={() => navigate("/add-agent")}
+              onClick={() => navigate("/agents/add")}
             >
               Add Agent
             </button>
@@ -82,7 +82,7 @@ function Dashboard() {
         <div className="flex flex-col md:flex-row gap-4 mt-6">
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md transition-colors duration-300 flex items-center justify-center"
-            onClick={() => navigate("/add-agent")}
+            onClick={() => navigate("/agents/add")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
