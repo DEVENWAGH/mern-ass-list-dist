@@ -59,7 +59,6 @@ if (!fs.existsSync(uploadsDir)) {
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/agents", require("./routes/agentRoutes"));
-app.use("/api/lists", require("./routes/listRoutes"));
 app.use("/api/health", require("./routes/health"));
 app.use("/api/csv", require("./routes/csvRoutes"));
 
