@@ -7,114 +7,116 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
+
+// Page imports
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AgentsPage from "./pages/AgentsPage";
-import Navbar from "./components/layout/Navbar";
-import AddAgent from "./components/agents/AddAgent";
 import CsvUpload from "./pages/CsvUpload";
 import ViewDistributions from "./pages/ViewDistributions";
-import { useSelector } from "react-redux";
 
-// Protected route component
-const ProtectedRoute = ({ children }) => {
+// Component imports
+import Navbar from "./components/layout/Navbar";
+import AddAgent from "./components/agents/AddAgent";
+import Spinner from "./components/common/Spinner";
+
+/**
+ * Protected route component that ensures users are authenticated
+ * before accessing protected pages
+ */
+const ProtectedLayout = ({ children }) => {
   const { user, isLoading } = useSelector((state) => state.auth);
 
+  // Show loading spinner while checking authentication
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
+  // Redirect to login if not authenticated
   if (!user) {
-    // Redirect to login if not authenticated
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  // User is authenticated, render the layout with navbar
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <div className="flex-grow p-4 md:p-6">{children}</div>
+    </div>
+  );
 };
 
 function App() {
   return (
     <Router>
       <div className="w-full h-full min-h-screen flex flex-col bg-gray-50">
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+        />
+
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected routes with layout */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <div className="flex-grow p-4 md:p-6">
-                    <Dashboard />
-                  </div>
-                </div>
-              </ProtectedRoute>
+              <ProtectedLayout>
+                <Dashboard />
+              </ProtectedLayout>
             }
           />
+
           <Route
             path="/agents"
             element={
-              <ProtectedRoute>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <div className="flex-grow p-4 md:p-6">
-                    <AgentsPage />
-                  </div>
-                </div>
-              </ProtectedRoute>
+              <ProtectedLayout>
+                <AgentsPage />
+              </ProtectedLayout>
             }
           />
+
           <Route
             path="/agents/add"
             element={
-              <ProtectedRoute>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <div className="flex-grow p-4 md:p-6">
-                    <AddAgent />
-                  </div>
-                </div>
-              </ProtectedRoute>
+              <ProtectedLayout>
+                <AddAgent />
+              </ProtectedLayout>
             }
           />
+
+          <Route
+            path="/upload-csv"
+            element={
+              <ProtectedLayout>
+                <CsvUpload />
+              </ProtectedLayout>
+            }
+          />
+
+          <Route
+            path="/distributions"
+            element={
+              <ProtectedLayout>
+                <ViewDistributions />
+              </ProtectedLayout>
+            }
+          />
+
+          {/* Redirects */}
+          <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route
             path="/add-agent"
             element={<Navigate to="/agents/add" replace />}
           />
-          <Route
-            path="/upload-csv"
-            element={
-              <ProtectedRoute>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <div className="flex-grow p-4 md:p-6">
-                    <CsvUpload />
-                  </div>
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/distributions"
-            element={
-              <ProtectedRoute>
-                <div className="flex flex-col min-h-screen">
-                  <Navbar />
-                  <div className="flex-grow p-4 md:p-6">
-                    <ViewDistributions />
-                  </div>
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </div>

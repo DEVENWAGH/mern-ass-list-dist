@@ -9,4 +9,20 @@ html, body, #root {
 
 body {
   overflow-x: hidden;
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Add some custom utility classes */
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded transition-colors;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-4 md:p-6;
+  }
 }

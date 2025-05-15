@@ -1,31 +1,29 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// Create axios instance with base URL from environment or use relative paths
-// Get API URL without using import.meta (which causes issues on some browsers)
-let API_URL = "https://mern-ass.onrender.com"; // Default production URL
+// Determine API URL based on environment
+let API_URL = "https://mern-ass.onrender.com"; // Production default
 
-// Only use import.meta in supported environments
+// Try to get URL from environment variables in a browser-safe way
 try {
-  if (
-    typeof import.meta !== "undefined" &&
-    import.meta.env &&
-    import.meta.env.VITE_API_URL
-  ) {
+  // First check Vite environment variables
+  if (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) {
     API_URL = import.meta.env.VITE_API_URL;
-  } else if (
-    typeof window !== "undefined" &&
-    window.env &&
-    window.env.REACT_APP_API_URL
-  ) {
+  }
+  // Fall back to window.env for compatibility with non-Vite environments
+  else if (typeof window !== "undefined" && window.env?.REACT_APP_API_URL) {
     API_URL = window.env.REACT_APP_API_URL;
   }
 } catch (e) {
-  console.warn("Unable to access import.meta, using default API URL");
+  console.warn("Unable to access environment variables, using default API URL");
 }
 
-console.log("API URL:", API_URL); // For debugging during development
+// Log API URL during development for debugging
+if (import.meta.env.DEV) {
+  console.log("API URL:", API_URL);
+}
 
+// Create axios instance with consistent configuration
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -33,38 +31,39 @@ const api = axios.create({
   },
 });
 
-// Request interceptor for API calls
+// Request interceptor - adds auth token to all requests
 api.interceptors.request.use(
   (config) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.token) {
-      config.headers.Authorization = `Bearer ${user.token}`;
+    // Get auth token from localStorage
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      if (user?.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for API calls
+// Response interceptor - handle errors globally
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    const message =
+    // Extract error message
+    const errorMessage =
       error.response?.data?.message || error.message || "Something went wrong";
 
-    // Show toast notification for errors
-    toast.error(message);
+    // Show toast notification
+    toast.error(errorMessage);
 
     // Handle authentication errors
-    if (error.response && error.response.status === 401) {
-      // Clear user data if token is invalid/expired
+    if (error.response?.status === 401) {
+      // Only clear user data if we're not already on the login page
+      // to avoid an infinite redirect loop
       localStorage.removeItem("user");
 
-      // Redirect to login page if not already there
       if (!window.location.pathname.includes("/login")) {
         window.location.href = "/login";
       }
