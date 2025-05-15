@@ -118,13 +118,22 @@ const CsvUpload = () => {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-            <button
-              type="button"
-              onClick={() => navigate("/dashboard")}
-              className="w-full md:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded mb-2 md:mb-0"
-            >
-              Back to Dashboard
-            </button>
+            <div className="flex flex-col md:flex-row gap-2">
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                className="w-full md:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded mb-2 md:mb-0"
+              >
+                Back to Dashboard
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/distributions")}
+                className="w-full md:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded mb-2 md:mb-0"
+              >
+                View All Distributions
+              </button>
+            </div>
             <button
               type="submit"
               className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded flex items-center justify-center"

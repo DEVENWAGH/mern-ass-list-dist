@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const distributionSchema = mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     agent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Agent",
@@ -23,6 +28,10 @@ const distributionSchema = mongoose.Schema(
         },
       },
     ],
+    fileName: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

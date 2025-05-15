@@ -3,6 +3,7 @@ import csvService from "./csvService";
 
 const initialState = {
   distributions: {},
+  distributionHistory: {},
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -14,8 +15,7 @@ export const uploadCsv = createAsyncThunk(
   "csv/upload",
   async (csvData, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await csvService.uploadCsv(csvData, token);
+      return await csvService.uploadCsv(csvData);
     } catch (error) {
       const message =
         (error.response &&
@@ -33,8 +33,7 @@ export const getDistributions = createAsyncThunk(
   "csv/getDistributions",
   async (_, thunkAPI) => {
     try {
-      const token = thunkAPI.getState().auth.user.token;
-      return await csvService.getDistributions(token);
+      return await csvService.getDistributions();
     } catch (error) {
       const message =
         (error.response &&
@@ -79,7 +78,7 @@ export const csvSlice = createSlice({
       .addCase(getDistributions.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.distributions = action.payload.data;
+        state.distributionHistory = action.payload.data;
       })
       .addCase(getDistributions.rejected, (state, action) => {
         state.isLoading = false;

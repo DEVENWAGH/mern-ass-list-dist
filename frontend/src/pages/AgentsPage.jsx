@@ -153,7 +153,7 @@ function AgentsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Agent Management</h1>
+        <h1 className="text-3xl font-bold">Your Agent Management</h1>
         <button
           onClick={() => openModal()}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
@@ -165,7 +165,7 @@ function AgentsPage() {
       {!agents || agents.length === 0 ? (
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <p className="text-gray-600">
-            No agents found. Add your first agent!
+            You haven't added any agents yet. Add your first agent!
           </p>
         </div>
       ) : (

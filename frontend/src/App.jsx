@@ -14,6 +14,7 @@ import AgentsPage from "./pages/AgentsPage";
 import Navbar from "./components/layout/Navbar";
 import AddAgent from "./components/agents/AddAgent";
 import CsvUpload from "./pages/CsvUpload";
+import ViewDistributions from "./pages/ViewDistributions";
 import { useSelector } from "react-redux";
 
 // Protected route component
@@ -94,6 +95,19 @@ function App() {
                   <Navbar />
                   <div className="flex-grow p-4 md:p-6">
                     <CsvUpload />
+                  </div>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/distributions"
+            element={
+              <ProtectedRoute>
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <div className="flex-grow p-4 md:p-6">
+                    <ViewDistributions />
                   </div>
                 </div>
               </ProtectedRoute>

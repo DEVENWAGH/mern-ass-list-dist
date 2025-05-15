@@ -42,15 +42,17 @@ function Dashboard() {
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
           Welcome {user?.name || "User"}
         </h1>
-        <p className="text-lg text-gray-600 font-medium">Agents Dashboard</p>
+        <p className="text-lg text-gray-600 font-medium">
+          Your Personal Agents Dashboard
+        </p>
       </section>
 
       <section className="bg-white rounded-lg shadow-md p-6">
         {agents && agents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
               <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                Total Agents
+                Your Agents
               </h3>
               <p className="text-3xl font-bold text-blue-600">
                 {agents.length}
@@ -63,6 +65,18 @@ function Dashboard() {
               <p className="text-3xl font-bold text-green-600">
                 {agents.filter((agent) => agent.status === "active").length}
               </p>
+            </div>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-bold mb-2">View Distributions</h3>
+              <p className="text-gray-600 mb-4">
+                View all contacts distributions among agents
+              </p>
+              <button
+                onClick={() => navigate("/distributions")}
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded px-4 py-2 w-full"
+              >
+                View Distributions
+              </button>
             </div>
           </div>
         ) : (

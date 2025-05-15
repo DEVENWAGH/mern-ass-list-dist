@@ -14,8 +14,8 @@ const createAgent = async (req, res) => {
   const { name, email, phone, password, status } = req.body;
 
   try {
-    // Check if agent exists
-    let agent = await Agent.findOne({ email });
+    // Check if agent exists for this user
+    let agent = await Agent.findOne({ email, user: req.user.id });
     if (agent) {
       return res.status(400).json({ message: "Agent already exists" });
     }
@@ -27,8 +27,9 @@ const createAgent = async (req, res) => {
         .json({ message: "Phone number must include country code (e.g., +1)" });
     }
 
-    // Create new agent
+    // Create new agent with user reference
     agent = new Agent({
+      user: req.user.id,
       name,
       email,
       phone,
@@ -66,9 +67,11 @@ const createAgent = async (req, res) => {
 // @access  Private
 const getAgents = async (req, res) => {
   try {
-    const agents = await Agent.find()
+    // Get only agents created by the logged-in user
+    const agents = await Agent.find({ user: req.user.id })
       .select("-password")
       .sort({ createdAt: -1 });
+
     res.status(200).json({
       success: true,
       count: agents.length,
@@ -88,7 +91,11 @@ const getAgents = async (req, res) => {
 // @access  Private
 const getAgentById = async (req, res) => {
   try {
-    const agent = await Agent.findById(req.params.id).select("-password");
+    // Make sure the agent belongs to this user
+    const agent = await Agent.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    }).select("-password");
 
     if (!agent) {
       return res.status(404).json({
@@ -130,7 +137,11 @@ const updateAgent = async (req, res) => {
   if (status) agentFields.status = status;
 
   try {
-    let agent = await Agent.findById(req.params.id);
+    // Find agent and make sure it belongs to this user
+    let agent = await Agent.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
     if (!agent) {
       return res.status(404).json({
@@ -170,7 +181,11 @@ const updateAgent = async (req, res) => {
 // @access  Private
 const deleteAgent = async (req, res) => {
   try {
-    const agent = await Agent.findById(req.params.id);
+    // Find agent and make sure it belongs to this user
+    const agent = await Agent.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
     if (!agent) {
       return res.status(404).json({

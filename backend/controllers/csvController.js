@@ -27,6 +27,7 @@ const uploadAndDistribute = async (req, res) => {
     // Get file path and extension
     const filePath = req.file.path;
     const fileExt = path.extname(req.file.originalname).toLowerCase();
+    const fileName = req.file.originalname;
 
     let items = [];
 
@@ -76,8 +77,11 @@ const uploadAndDistribute = async (req, res) => {
       });
     }
 
-    // Get active agents
-    const agents = await Agent.find({ status: "active" });
+    // Get active agents belonging to this user
+    const agents = await Agent.find({
+      status: "active",
+      user: req.user.id,
+    });
 
     if (agents.length === 0) {
       // Clean up file
@@ -90,8 +94,11 @@ const uploadAndDistribute = async (req, res) => {
       });
     }
 
-    // Delete existing distributions
-    await Distribution.deleteMany({});
+    // Delete existing distributions for this file name for this user
+    await Distribution.deleteMany({
+      user: req.user.id,
+      fileName: fileName,
+    });
 
     // Distribute items among agents
     const distributions = distributeItems(items, agents);
@@ -100,8 +107,10 @@ const uploadAndDistribute = async (req, res) => {
     const savedDistributions = {};
     for (const agentId in distributions) {
       const distribution = new Distribution({
+        user: req.user.id,
         agent: agentId,
         items: distributions[agentId],
+        fileName: fileName,
       });
       await distribution.save();
       savedDistributions[agentId] = distributions[agentId];
@@ -133,24 +142,43 @@ const uploadAndDistribute = async (req, res) => {
   }
 };
 
-// @desc    Get distributions by agent
+// @desc    Get distributions by agent for the current user
 // @route   GET /api/csv/distributions
 // @access  Private
 const getDistributions = async (req, res) => {
   try {
-    const distributions = await Distribution.find().populate(
-      "agent",
-      "name email"
-    );
+    // Get distributions for the current user only
+    const distributions = await Distribution.find({ user: req.user.id })
+      .populate("agent", "name email")
+      .sort({ createdAt: -1 });
 
     const formattedDistributions = {};
+
+    // Group by file name first
+    const distributionsByFile = {};
+
     distributions.forEach((dist) => {
-      formattedDistributions[dist.agent._id] = dist.items;
+      if (!distributionsByFile[dist.fileName]) {
+        distributionsByFile[dist.fileName] = {
+          fileName: dist.fileName,
+          uploadDate: dist.createdAt, // Use createdAt instead of uploadDate
+          agentDistributions: {},
+        };
+      }
+
+      distributionsByFile[dist.fileName].agentDistributions[dist.agent._id] = {
+        agent: {
+          _id: dist.agent._id,
+          name: dist.agent.name,
+          email: dist.agent.email,
+        },
+        items: dist.items,
+      };
     });
 
     res.status(200).json({
       success: true,
-      data: formattedDistributions,
+      data: distributionsByFile,
     });
   } catch (error) {
     console.error("Error fetching distributions:", error);
