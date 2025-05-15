@@ -37,7 +37,6 @@ const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: "admin", // Default role
     });
 
     if (user) {
