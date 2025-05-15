@@ -2,13 +2,27 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Create axios instance with base URL from environment or use relative paths
-// Properly handle Vite environment variables using import.meta.env
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  (typeof window !== "undefined" &&
+// Get API URL without using import.meta (which causes issues on some browsers)
+let API_URL = "https://mern-ass.onrender.com"; // Default production URL
+
+// Only use import.meta in supported environments
+try {
+  if (
+    typeof import.meta !== "undefined" &&
+    import.meta.env &&
+    import.meta.env.VITE_API_URL
+  ) {
+    API_URL = import.meta.env.VITE_API_URL;
+  } else if (
+    typeof window !== "undefined" &&
     window.env &&
-    window.env.REACT_APP_API_URL) ||
-  "http://localhost:5000";
+    window.env.REACT_APP_API_URL
+  ) {
+    API_URL = window.env.REACT_APP_API_URL;
+  }
+} catch (e) {
+  console.warn("Unable to access import.meta, using default API URL");
+}
 
 console.log("API URL:", API_URL); // For debugging during development
 

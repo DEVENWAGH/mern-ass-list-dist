@@ -20,8 +20,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Configure CORS properly
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "https://mern-ass.vercel.app",
+  "https://mern-ass-deven-waghs-projects.vercel.app/",
+  // Add any other Vercel preview URLs if needed
+];
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || "*",
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.indexOf(origin) !== -1 ||
+      process.env.NODE_ENV !== "production"
+    ) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS: ", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,

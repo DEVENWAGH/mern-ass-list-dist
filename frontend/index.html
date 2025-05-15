@@ -20,15 +20,16 @@
       href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>MERN Assignment</title>
+    <title>MERN App</title>
+    <!-- Inject environment variables as window.env for compatibility -->
+    <script>
+      window.env = {
+        REACT_APP_API_URL: "https://mern-ass.onrender.com",
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      // Inject environment variables for older libraries that expect window.env
-      window.env = window.env || {};
-      window.env.REACT_APP_API_URL = import.meta.env.VITE_API_URL;
-    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
